@@ -1,0 +1,6 @@
+pandas
+streamlit
+anndata
+scanpy
+seaborn
+git+https://github.com/cytoscape/py4cytoscape.git@1.9.0

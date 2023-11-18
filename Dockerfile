@@ -1,17 +1,22 @@
-FROM httpd:bookworm
+# app/Dockerfile
 
-COPY /myapp /root/app
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+FROM python:3.10-slim
 
-RUN apt-get update && \
-    apt-get install -y software-properties-common gnupg supervisor libharfbuzz-dev libfribidi-dev libssl-dev libcurl4-openssl-dev libxml2-dev libcairo2-dev libxt-dev xtail
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' && \
-    add-apt-repository 'deb http://cloud.r-project.org/bin/linux/debian bookworm-cran40/' && \
-    apt-get update
-RUN apt-get install -y r-base
+WORKDIR /app
 
-RUN R -e "install.packages(c('BiocManager', 'shiny', 'tidyr', 'dplyr', 'ggplot2', 'readr', 'magrittr', 'tibble', 'stringr'), repos='https://cran.rstudio.com/')" && \
-    R -e "BiocManager::install(c('RCX', 'SummarizedExperiment'))"
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    software-properties-common \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-EXPOSE 80 3838
-CMD ["/usr/bin/supervisord"]
+RUN git clone --branch streamlit --single-branch https://github.com/systemsomicslab/msdial2cytoscape.git .
+
+RUN pip3 install -r requirements.txt
+
+EXPOSE 8501
+
+HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
+
+ENTRYPOINT ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]

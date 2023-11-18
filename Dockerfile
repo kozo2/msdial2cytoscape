@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-RUN git clone --branch streamlit --single-branch https://github.com/systemsomicslab/msdial2cytoscape.git .
+RUN git clone https://github.com/kozo2/msdial2cytoscape.git .
 
 RUN pip3 install -r requirements.txt
 

@@ -1,9 +1,22 @@
 import streamlit as st
 import pandas as pd
 import anndata as ad
-import scanpy as sc
 import seaborn as sns
 import py4cytoscape as p4c
+import re
+
+def is_inchikey(string):
+    """
+    Check if a string is a valid InChIKey.
+    
+    Args:
+    string (str): The string to check.
+
+    Returns:
+    bool: True if the string is a valid InChIKey, False otherwise.
+    """
+    pattern = r"^[A-Z]{14}-[A-Z]{10}-[A-Z\d]$"
+    return bool(re.match(pattern, string))
 
 def to_anndata(df: pd.DataFrame) -> ad.AnnData:
     df_row = df.iloc[:, 0:28]
@@ -51,6 +64,8 @@ if cys_file is not None:
         f.write(cys_file.getbuffer())
     p4c.sandbox_send_to(cys_file.name, base_url='http://cytoscape-desktop:1234/v1')
     p4c.open_session(cys_file.name, base_url='http://cytoscape-desktop:1234/v1')
+else:
+    st.write("Upload a Cytoscape session [cys] to get started.")
 
 # Upload TSV file
 uploaded_file = st.file_uploader("Upload a TSV file", type="txt")
@@ -61,16 +76,50 @@ if uploaded_file is not None:
     data = pd.read_csv(uploaded_file, sep='\t', header=None)
     adata = to_anndata(data)
 
-    # Button to perform hierarchical clustering
-    if st.button('Cluster Data and Show Heatmap'):
-        # # Perform hierarchical clustering
-        # linkage = sch.linkage(data, method='ward')
-        # dendrogram = sch.dendrogram(linkage)
-        # cluster_ids = sch.fcluster(linkage, t=1.5, criterion='distance')
+    nodetable = p4c.get_table_columns(base_url='http://cytoscape-desktop:1234/v1')
 
-        # # Create a heatmap
-        # fig = sns.clustermap(data, method='ward', cmap='viridis', standard_scale=1)
-        fig = sc.pl.clustermap(adata)
-        st.pyplot(fig)
-else:
-    st.write("Upload a TSV file to get started.")
+    nodetblindex = []
+    barimgpath = []
+    boximgpath = []
+    for index, row in nodetable.iterrows():
+        inchikey = row['XrefId']
+        nodetblindex.append(index)
+        barimgpath.append("")
+        boximgpath.append("")
+        if is_inchikey(inchikey):
+            bdata = adata[adata.obs.INCHIKEY == inchikey]
+            if len(bdata.X) > 0:
+                tmp = bdata.var[['Class', 'File type']]
+                tmp['X'] = list(bdata.X[0])
+
+                barplt = sns.catplot(data=tmp, x="Class", y="X", kind="bar")
+                barpngfilename = "bar_" + inchikey + ".png"
+                barplt.savefig(barpngfilename)
+                p4c.sandbox_send_to(barpngfilename, base_url='http://cytoscape-desktop:1234/v1')
+                barimgpath.pop()
+                barimgpath.append("/root/CytoscapeConfiguration/filetransfer/default_sandbox/" + barpngfilename)
+
+                boxplt = sns.catplot(data=tmp, x="Class", y="X", kind="box")
+                boxpngfilename = "box_" + inchikey + ".png"
+                boxplt.savefig(boxpngfilename)
+                p4c.sandbox_send_to("box_" + inchikey + ".png", base_url='http://cytoscape-desktop:1234/v1')
+                boximgpath.pop()
+                boximgpath.append("/root/CytoscapeConfiguration/filetransfer/default_sandbox/" + boxpngfilename)
+    
+    df4send = pd.DataFrame(data={'barimgpath': barimgpath, 'boximgpath': boximgpath})
+    df4send.index = nodetblindex
+    p4c.load_table_data(df4send, base_url='http://cytoscape-desktop:1234/v1', table_key_column='SUID')
+
+#     # Button to perform hierarchical clustering
+#     if st.button('Cluster Data and Show Heatmap'):
+#         # # Perform hierarchical clustering
+#         # linkage = sch.linkage(data, method='ward')
+#         # dendrogram = sch.dendrogram(linkage)
+#         # cluster_ids = sch.fcluster(linkage, t=1.5, criterion='distance')
+
+#         # # Create a heatmap
+#         # fig = sns.clustermap(data, method='ward', cmap='viridis', standard_scale=1)
+#         fig = sc.pl.clustermap(adata)
+#         st.pyplot(fig)
+# else:
+#     st.write("Upload a TSV file to get started.")

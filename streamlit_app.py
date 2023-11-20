@@ -3,15 +3,7 @@ import pandas as pd
 import anndata as ad
 import scanpy as sc
 import seaborn as sns
-
-# Streamlit page configuration
-st.set_page_config(page_title="msdial2cytoscape", layout="wide")
-
-# Title of the app
-st.title("msdial2cytoscape")
-
-# Upload TSV file
-uploaded_file = st.file_uploader("Upload a TSV file", type="txt")
+import py4cytoscape as p4c
 
 def to_anndata(df: pd.DataFrame) -> ad.AnnData:
     df_row = df.iloc[:, 0:28]
@@ -44,6 +36,22 @@ def to_anndata(df: pd.DataFrame) -> ad.AnnData:
     adata.var["Batch ID"] = list(df_col_avgstd_removed.iloc[3])
 
     return adata
+
+# Streamlit page configuration
+st.set_page_config(page_title="msdial2cytoscape", layout="wide")
+
+# Title of the app
+st.title("msdial2cytoscape")
+
+# Upload cys file
+cys_file = st.file_uploader("Upload a Cytoscape session [cys] file", type="cys")
+
+# Upload TSV file
+uploaded_file = st.file_uploader("Upload a TSV file", type="txt")
+
+if cys_file is not None:
+    p4c.sandbox_send_to(cys_file, base_url='http://cytoscape-desktop:1234/v1')
+    p4c.open_session(cys_file, base_url='http://cytoscape-desktop:1234/v1')
 
 # Once a file is uploaded
 if uploaded_file is not None:

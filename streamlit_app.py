@@ -97,14 +97,14 @@ if uploaded_file is not None:
                 barplt.savefig(barpngfilename)
                 p4c.sandbox_send_to(barpngfilename, base_url='http://cytoscape-desktop:1234/v1')
                 barimgpath.pop()
-                barimgpath.append("/root/CytoscapeConfiguration/filetransfer/default_sandbox/" + barpngfilename)
+                barimgpath.append("file:/root/CytoscapeConfiguration/filetransfer/default_sandbox/" + barpngfilename)
 
                 boxplt = sns.catplot(data=tmp, x="Class", y="X", kind="box")
                 boxpngfilename = "box_" + inchikey + ".png"
                 boxplt.savefig(boxpngfilename)
                 p4c.sandbox_send_to("box_" + inchikey + ".png", base_url='http://cytoscape-desktop:1234/v1')
                 boximgpath.pop()
-                boximgpath.append("/root/CytoscapeConfiguration/filetransfer/default_sandbox/" + boxpngfilename)
+                boximgpath.append("file:/root/CytoscapeConfiguration/filetransfer/default_sandbox/" + boxpngfilename)
     
     df4send = pd.DataFrame(data={'barimgpath': barimgpath, 'boximgpath': boximgpath})
     df4send.index = nodetblindex

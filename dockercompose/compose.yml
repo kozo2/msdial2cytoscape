@@ -19,3 +19,7 @@ services:
       - JUPYTER_TOKEN=${JUPYTER_TOKEN}
       - PASSWORD=${JUPYTER_PASSWORD}
       
+  streamlit:
+    image: python:3.10-slim
+    ports:
+      - 8501:8501

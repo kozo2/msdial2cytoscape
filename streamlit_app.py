@@ -46,12 +46,14 @@ st.title("msdial2cytoscape")
 # Upload cys file
 cys_file = st.file_uploader("Upload a Cytoscape session [cys] file", type="cys")
 
+if cys_file is not None:
+    with open(cys_file.name, 'wb') as f:
+        f.write(cys_file.getbuffer())
+    p4c.sandbox_send_to(cys_file.name, base_url='http://cytoscape-desktop:1234/v1')
+    p4c.open_session(cys_file.name, base_url='http://cytoscape-desktop:1234/v1')
+
 # Upload TSV file
 uploaded_file = st.file_uploader("Upload a TSV file", type="txt")
-
-if cys_file is not None:
-    p4c.sandbox_send_to(cys_file, base_url='http://cytoscape-desktop:1234/v1')
-    p4c.open_session(cys_file, base_url='http://cytoscape-desktop:1234/v1')
 
 # Once a file is uploaded
 if uploaded_file is not None:

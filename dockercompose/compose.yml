@@ -20,6 +20,6 @@ services:
       - PASSWORD=${JUPYTER_PASSWORD}
       
   streamlit:
-    image: python:3.10-slim
+    image: m2cstr
     ports:
       - 8501:8501

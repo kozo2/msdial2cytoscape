@@ -20,6 +20,6 @@ services:
       - PASSWORD=${JUPYTER_PASSWORD}
       
   streamlit:
-    image: m2cstr
+    image: kozo2/msdial2cytoscape:latest
     ports:
       - 8501:8501

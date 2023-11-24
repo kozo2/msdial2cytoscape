@@ -83,45 +83,37 @@ if uploaded_file is not None:
     nodetblindex = []
     barimgpath = []
     boximgpath = []
-    for index, row in nodetable.iterrows():
-        inchikey = row['XrefId']
-        nodetblindex.append(index)
-        barimgpath.append("")
-        boximgpath.append("")
-        if is_inchikey(inchikey):
-            bdata = adata[adata.obs.INCHIKEY == inchikey]
-            if len(bdata.X) > 0:
-                tmp = bdata.var[['Class', 'File type']]
-                tmp['X'] = list(bdata.X[0])
+    with st.spinner('Creating bar/box images for each node...'):
+        for index, row in nodetable.iterrows():
+            inchikey = row['XrefId']
+            nodetblindex.append(index)
+            barimgpath.append("")
+            boximgpath.append("")
+            if is_inchikey(inchikey):
+                bdata = adata[adata.obs.INCHIKEY == inchikey]
+                if len(bdata.X) > 0:
+                    tmp = bdata.var[['Class', 'File type']]
+                    tmp['X'] = list(bdata.X[0])
 
-                barplt = sns.catplot(data=tmp, x="Class", y="X", kind="bar")
-                barpngfilename = "bar_" + inchikey + ".png"
-                barplt.savefig(barpngfilename)
-                p4c.sandbox_send_to(barpngfilename, base_url='http://cytoscape-desktop:1234/v1')
-                barimgpath.pop()
-                barimgpath.append("file:/root/CytoscapeConfiguration/filetransfer/default_sandbox/" + barpngfilename)
+                    barplt = sns.catplot(data=tmp, x="Class", y="X", kind="bar")
+                    barpngfilename = "bar_" + inchikey + ".png"
+                    barplt.savefig(barpngfilename)
+                    p4c.sandbox_send_to(barpngfilename, base_url='http://cytoscape-desktop:1234/v1')
+                    barimgpath.pop()
+                    barimgpath.append("file:/root/CytoscapeConfiguration/filetransfer/default_sandbox/" + barpngfilename)
 
-                boxplt = sns.catplot(data=tmp, x="Class", y="X", kind="box")
-                boxpngfilename = "box_" + inchikey + ".png"
-                boxplt.savefig(boxpngfilename)
-                p4c.sandbox_send_to("box_" + inchikey + ".png", base_url='http://cytoscape-desktop:1234/v1')
-                boximgpath.pop()
-                boximgpath.append("file:/root/CytoscapeConfiguration/filetransfer/default_sandbox/" + boxpngfilename)
+                    boxplt = sns.catplot(data=tmp, x="Class", y="X", kind="box")
+                    boxpngfilename = "box_" + inchikey + ".png"
+                    boxplt.savefig(boxpngfilename)
+                    p4c.sandbox_send_to("box_" + inchikey + ".png", base_url='http://cytoscape-desktop:1234/v1')
+                    boximgpath.pop()
+                    boximgpath.append("file:/root/CytoscapeConfiguration/filetransfer/default_sandbox/" + boxpngfilename)
     
-    df4send = pd.DataFrame(data={'barimgpath': barimgpath, 'boximgpath': boximgpath})
-    df4send.index = nodetblindex
-    p4c.load_table_data(df4send, base_url='http://cytoscape-desktop:1234/v1', table_key_column='SUID')
+        df4send = pd.DataFrame(data={'barimgpath': barimgpath, 'boximgpath': boximgpath})
+        df4send.index = nodetblindex
+        p4c.load_table_data(df4send, base_url='http://cytoscape-desktop:1234/v1', table_key_column='SUID')
+        current_style = p4c.get_current_style(base_url='http://cytoscape-desktop:1234/v1')
+        mvp = p4c.map_visual_property("NODE_CUSTOMGRAPHICS_1", "barimgpath", "p", base_url='http://cytoscape-desktop:1234/v1')
+        p4c.update_style_mapping(current_style, mvp, base_url='http://cytoscape-desktop:1234/v1')
 
-#     # Button to perform hierarchical clustering
-#     if st.button('Cluster Data and Show Heatmap'):
-#         # # Perform hierarchical clustering
-#         # linkage = sch.linkage(data, method='ward')
-#         # dendrogram = sch.dendrogram(linkage)
-#         # cluster_ids = sch.fcluster(linkage, t=1.5, criterion='distance')
-
-#         # # Create a heatmap
-#         # fig = sns.clustermap(data, method='ward', cmap='viridis', standard_scale=1)
-#         fig = sc.pl.clustermap(adata)
-#         st.pyplot(fig)
-# else:
-#     st.write("Upload a TSV file to get started.")
+    st.success('Done! Please check if your MS-DIAL result is visible on http://localhost:6080/vnc_auto.html')    

@@ -72,6 +72,8 @@ else:
 # Upload TSV file
 uploaded_file = st.file_uploader("Upload a TSV file", type="txt")
 
+is_mapped = None
+
 # Once a file is uploaded
 if uploaded_file is not None:
     # Read the file into a Pandas DataFrame
@@ -116,4 +118,21 @@ if uploaded_file is not None:
         mvp = p4c.map_visual_property("NODE_CUSTOMGRAPHICS_1", "barimgpath", "p", base_url='http://cytoscape-desktop:1234/v1')
         p4c.update_style_mapping(current_style, mvp, base_url='http://cytoscape-desktop:1234/v1')
 
-    st.success('Done! Please check if your MS-DIAL result is visible on http://localhost:6080/vnc_auto.html')    
+    st.success('Done! Please check if your MS-DIAL result is visible on http://localhost:6080/vnc_auto.html') 
+    is_mapped = True
+
+    if is_mapped:
+        viz_bar = st.button("Visualize bar chart")
+        viz_box = st.button("Visualize box chart")
+        if viz_bar:
+            current_style = p4c.get_current_style(base_url='http://cytoscape-desktop:1234/v1')
+            mvp = p4c.map_visual_property("NODE_CUSTOMGRAPHICS_1", "barimgpath", "p", base_url='http://cytoscape-desktop:1234/v1')
+            p4c.update_style_mapping(current_style, mvp, base_url='http://cytoscape-desktop:1234/v1')
+            st.success('Done! Please check if bar chart is mapped in http://localhost:6080/vnc_auto.html')
+        
+        if viz_box:
+            current_style = p4c.get_current_style(base_url='http://cytoscape-desktop:1234/v1')
+            mvp = p4c.map_visual_property("NODE_CUSTOMGRAPHICS_1", "boximgpath", "p", base_url='http://cytoscape-desktop:1234/v1')
+            p4c.update_style_mapping(current_style, mvp, base_url='http://cytoscape-desktop:1234/v1')
+            st.success('Done! Please check if box plot is mapped in http://localhost:6080/vnc_auto.html')
+    

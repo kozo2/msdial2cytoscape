@@ -13,5 +13,6 @@
     ```
 4. Open http://localhost:6080/vnc_auto.html in your browser. You should see a Cytoscape window.
 5. Open http://localhost:8501/ in your browser. You should see a Streamlit app named "msdial2cytoscape".
-6. Upload your Cytoscape cys file (e.g. "my_pathway.cys") to the first button in http://localhost:8501/ .
-7. Upload your MS-DIAL alignment result table file (e.g. "my_msdial_result.txt") to the second button in http://localhost:8501/ .
+6. Upload your Cytoscape cys file (e.g. "my_pathway.cys") from the `1.Opening cytoscape session` link on the left in http://localhost:8501/ tab. (Then you should see your network in http://localhost:6080/vnc_auto.html tab.)
+7. Upload your MS-DIAL alignment result table file (e.g. "my_msdial_result.txt") from the `2.Profile diagram mapping` link on the left in http://localhost:8501/ tab. (Then you should see your MS-DIAL profile in http://localhost:6080/vnc_auto.html tab.)
+8. Switch Bar / Box plot from the `3.Switching bar or box` link on the left in http://localhost:8501/ tab.

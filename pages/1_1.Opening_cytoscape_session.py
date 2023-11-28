@@ -1,4 +1,5 @@
 import streamlit as st
+import py4cytoscape as p4c
 
 st.set_page_config(
     page_title="Open Cytoscape .cys file",

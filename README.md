@@ -2,7 +2,7 @@
 
 ## Getting Started
 1. Download Docker Desktop from https://www.docker.com/products/docker-desktop
-2. Install Docker Desktop
+2. Install and Start Docker Desktop
 3. Run following command in Terminal
     ```
     mkdir m2c

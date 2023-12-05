@@ -11,6 +11,7 @@
 8. Upload your Cytoscape cys file (e.g. "my_pathway.cys") from the `1.Opening cytoscape session` link on the left in http://localhost:8501/ tab. (Then you should see your network in http://localhost:6080/vnc_auto.html tab.)
 9. Upload your MS-DIAL alignment result table file (e.g. "my_msdial_result.txt") from the `2.Profile diagram mapping` link on the left in http://localhost:8501/ tab. (Then you should see your MS-DIAL profile in http://localhost:6080/vnc_auto.html tab.)
 10. Switch Bar / Box plot from the `3.Switching bar or box` link on the left in http://localhost:8501/ tab.
+11. Click `4. Download cys file` link and `Download cys` button on the left in in http://localhost:8501/ tab to download the Cytoscape network session to your local PC.
 
 ## Updating msdial2cytoscape
 

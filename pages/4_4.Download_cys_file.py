@@ -9,8 +9,8 @@ def get_cys_file():
     return str(current_datetime).split(" ")[0] + ".cys"
 
 if st.session_state['is_mapped']:
-    with open(str(current_datetime).split(" ")[0] + ".cys", "rb") as file:
-        cysfile = get_cys_file()
+    cysfile = get_cys_file()
+    with open(cysfile, "rb") as file:
         btn = st.download_button(
             label="Download cys file",
             data=file,

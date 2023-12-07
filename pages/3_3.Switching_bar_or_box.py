@@ -3,13 +3,18 @@ import py4cytoscape as p4c
 import re
 
 if st.session_state['is_mapped']:
-    viz_bar_inchi1st = st.button("Visualize bar chart [The InChIKey mapping is performed using only the first block of the string]")
-    viz_bar_inchi2nd = st.button("Visualize bar chart [The InChIKey mapping is performed using the first and second blocks of the string]")
-    viz_bar_inchi3rd = st.button("Visualize bar chart [The InChIKey mapping is performed using the first, second, and third blocks of the string]")
 
-    viz_box_inchi1st = st.button("Visualize box chart [The InChIKey mapping is performed using only the first block of the string]")
-    viz_box_inchi2nd = st.button("Visualize box chart [The InChIKey mapping is performed using the first and second blocks of the string]")
-    viz_box_inchi3rd = st.button("Visualize box chart [The InChIKey mapping is performed using the first, second, and third blocks of the string]")
+    st.header("3. Switching the visualization type")
+
+    st.subheader("Visualize BAR chart")
+    viz_bar_inchi1st = st.button("Visualize BAR chart [The InChIKey mapping using **only the 1st block**]")
+    viz_bar_inchi2nd = st.button("Visualize BAR chart [The InChIKey mapping using **the 1st and 2nd blocks**]")
+    viz_bar_inchi3rd = st.button("Visualize BAR chart [The InChIKey mapping using **all its blocks**]")
+
+    st.subheader("Visualize BOX chart")
+    viz_box_inchi1st = st.button("Visualize BOX chart [The InChIKey mapping using **only the 1st block**]")
+    viz_box_inchi2nd = st.button("Visualize BOX chart [The InChIKey mapping using **the 1st and 2nd blocks**]")
+    viz_box_inchi3rd = st.button("Visualize BOX chart [The InChIKey mapping using **all its blocks**]")
     
     if viz_bar_inchi3rd:
         current_style = p4c.get_current_style(base_url='http://cytoscape-desktop:1234/v1')

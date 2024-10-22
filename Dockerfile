@@ -11,11 +11,12 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/systemsomicslab/msdial2cytoscape.git .
+RUN git clone -b use-fastapi https://github.com/systemsomicslab/msdial2cytoscape.git .
 
 RUN pip3 install -r requirements.txt
 
 EXPOSE 8501
+EXPOSE 8000
 
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 
